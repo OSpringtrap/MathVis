@@ -12,7 +12,7 @@
     settings: $('settings'), settingsPop: $('settings-pop'),
     readout: $('readout'), caption: $('caption'), timeline: $('timeline'), scrub: $('scrub'), markers: $('markers'),
     tlTime: $('tl-time'), tlSpeed: $('tl-speed'), theory: $('theory'), theoryTitle: $('theory-title'),
-    formulas: $('formulas'), fList: $('f-list'), fFocus: $('f-focus'), fBack: $('f-back'),
+    formulas: $('formulas'), fList: $('f-list'), fFocus: $('f-focus'), fBack: $('f-back'), fPlay: $('f-play'), fPreview: $('f-preview'),
     player: document.querySelector('.player'),
     realms: all('.realm'), themeButtons: all('[data-theme-set]'),
   };
@@ -201,6 +201,7 @@
 
   function drawFrame() {
     els.fig.innerHTML = topic.draw(state, h, frame);
+    els.fPlay.style.setProperty('--prog', demo ? Math.min(1, tl.p / total()).toFixed(4) : 0);
     els.readout.innerHTML = topic.readout ? topic.readout(state, h, frame) : '';
     renderCaption();
     syncTimeline();
@@ -327,6 +328,8 @@
 
   function updateButtons() {
     if (!topic) return;
+    if (demo) els.fPlay.querySelector('.f-playlabel').textContent = tl.playing ? 'Playing formula' : tl.p >= total() - 1e-6 ? 'Play formula again' : 'Paused';
+    els.fPlay.classList.toggle('playing', !!demo && tl.playing);
     const playing = tl.playing;
     els.play.innerHTML = `<svg><use href="#i-${playing ? 'pause' : 'play'}"/></svg>`;
     els.play.setAttribute('aria-label', playing ? 'Pause' : hasTail() ? (topic.sim ? 'Run the simulation' : 'Play the sweep') : 'Play the drawing');
@@ -370,10 +373,16 @@
     els.fFocus.hidden = true;
     els.fBack.hidden = true;
     els.fList.hidden = false;
-    els.fList.innerHTML = list.map((f, i) => `<li><button type="button" class="f-item" data-i="${i}"${f.demo ? ' style="padding-right:2.5rem"' : ''}>` +
-      `<span class="f-name">${f.name}</span><span class="f-tex">${MV.M(f.f)}</span></button>` +
-      (f.demo ? `<button type="button" class="f-play" data-demo="${i}" aria-label="Build ${f.name} step by step on the display" title="Build it step by step"><svg><use href="#i-play"/></svg></button>` : '') +
-      '</li>').join('');
+    els.fList.innerHTML = list.map((f, i) => `<li><button type="button" class="f-item" data-i="${i}">` +
+      `<span class="f-name">${f.name}</span><span class="f-tex">${MV.M(f.f)}</span></button></li>`).join('');
+    // The big button plays this topic's formula; its preview lights the pieces up in the order they'll be built.
+    const play = MV.plays?.[base.id];
+    els.fPlay.hidden = !play;
+    if (play) {
+      const parts = play.preview.map(([pos, text, order]) => ({ pos, text, order })).sort((x, y) => x.pos - y.pos);
+      els.fPreview.innerHTML = parts.map((x) => `<span style="--i:${x.order}">${x.text}</span>`).join('');
+      els.fPlay.setAttribute('aria-label', `Play formula: build ${play.name} step by step on the display`);
+    }
   }
 
   // The chosen formula pops out of the list and grows into a card.
@@ -384,8 +393,7 @@
     const from = item.getBoundingClientRect();
     focusIdx = i;
     els.fFocus.innerHTML = `<span class="f-name">${f.name}</span><span class="f-tex">${MV.M(f.f)}</span>` +
-      (f.note ? `<p class="f-note">${f.note}</p>` : '') +
-      (f.demo ? `<button type="button" class="f-play" data-demo="${i}"><svg><use href="#i-play"/></svg>Build it step by step</button>` : '');
+      (f.note ? `<p class="f-note">${f.note}</p>` : '');
     els.fList.hidden = true;
     els.fFocus.hidden = false;
     els.fBack.hidden = false;
@@ -441,28 +449,29 @@
   }
 
   els.fList.addEventListener('click', (e) => {
-    const play = e.target.closest('[data-demo]');
-    if (play) { startDemo(+play.dataset.demo); return; }
     const item = e.target.closest('.f-item');
     if (item) { MV.sound.unlock(); openFocus(+item.dataset.i); }
   });
-  els.fFocus.addEventListener('click', (e) => {
-    const play = e.target.closest('[data-demo]');
-    if (play) startDemo(+play.dataset.demo);
+  els.fPlay.addEventListener('click', () => {
+    if (demo && tl.playing) { pause(); return; }
+    if (demo && tl.p < buildLen() - 1e-6) { start(false); return; }
+    startDemo();
   });
   els.fBack.addEventListener('click', closeFocus);
 
   // A formula demo temporarily takes over the player: it builds the formula one term at a time.
-  function startDemo(i) {
-    const f = formulaList()[i];
-    if (!f?.demo) return;
+  function startDemo() {
+    const play = MV.plays?.[base.id];
+    if (!play) return;
     MV.sound.unlock();
     if (demo) endDemo(false);
-    demo = f;
+    demo = play;
     beforeDemo = topic;
-    topic = { ...topic, ...f.demo, sim: undefined, animate: undefined, simSay: undefined, simSfx: undefined, readout: undefined };
-    els.demoChip.querySelector('span').textContent = f.name;
-    els.demoChip.setAttribute('aria-label', `Leave the ${f.name} demo`);
+    topic = { ...topic, ...play, sim: undefined, animate: undefined, simSay: undefined, simSfx: undefined, readout: undefined };
+    els.fPlay.classList.add('playing');
+    els.fPlay.querySelector('.f-playlabel').textContent = 'Playing formula';
+    els.demoChip.querySelector('span').textContent = play.name;
+    els.demoChip.setAttribute('aria-label', `Leave ${play.name}`);
     els.demoChip.hidden = false;
     els.fig.setAttribute('viewBox', `0 0 800 ${topic.height || 420}`);
     renderText();
@@ -477,12 +486,18 @@
     demo = null;
     topic = beforeDemo;
     els.demoChip.hidden = true;
+    resetPlayButton();
     els.fig.setAttribute('viewBox', `0 0 800 ${topic.height || 420}`);
     renderText();
     renderMarkers();
     if (redraw) { pause(); seek(topic.sim ? total() : buildLen()); }
   }
   els.demoChip.addEventListener('click', () => endDemo());
+  function resetPlayButton() {
+    els.fPlay.classList.remove('playing');
+    els.fPlay.querySelector('.f-playlabel').textContent = 'Play formula';
+    els.fPlay.style.setProperty('--prog', 0);
+  }
 
   // ---------- Topics and modes ----------
 
@@ -494,7 +509,7 @@
   function show(id, modeId) {
     const t = topics.find((x) => x.id === id) || topics.find((x) => x.id === store.get('last', '')) || topics[0];
     pause();
-    if (demo) { demo = null; topic = beforeDemo; els.demoChip.hidden = true; }
+    if (demo) { demo = null; topic = beforeDemo; els.demoChip.hidden = true; resetPlayButton(); }
     if (topic) remembered[`${base.id}:${topic.modeId || ''}`] = state;
     const switching = base && base !== t;
     base = t;

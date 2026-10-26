@@ -225,11 +225,11 @@ button { font: inherit; color: inherit; }
 
 .stage {
   width: 100%;
-  max-width: 84rem;
   padding: 3rem 3.5rem 4rem;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 17rem;
-  column-gap: 2.75rem;
+  /* The topic keeps a readable width; the formula sheet takes the rest of the screen, and the gap between them grows with it. */
+  grid-template-columns: minmax(0, 60rem) minmax(26rem, 1fr);
+  column-gap: clamp(3rem, 7vw, 9rem);
   align-items: start;
 }
 .stage > * { grid-column: 1; min-width: 0; }
@@ -643,70 +643,115 @@ button { font: inherit; color: inherit; }
   font-variant-numeric: tabular-nums;
 }
 
-/* ---------- Formula list ---------- */
+/* ---------- Formula sheet ---------- */
 
 .formulas {
   grid-column: 2;
   grid-row: 1 / span 12;
+  justify-self: end;
+  width: min(100%, 36rem);
   position: sticky;
-  top: 1.5rem;
-  max-height: calc(100vh - 3rem);
-  overflow-y: auto;
-  overflow-x: visible;
-  padding-top: 0.4rem;
+  top: 1.25rem;
+  height: calc(100vh - 2.5rem);
+  display: flex;
+  flex-direction: column;
+  padding: 1.4rem 1.5rem 1.25rem;
+  background: var(--card);
+  border: 1px solid var(--grid);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
 }
-.f-head { display: flex; align-items: center; justify-content: space-between; min-height: 2.2rem; margin-bottom: 0.4rem; }
-.f-head h2 { margin: 0; font: 500 1.2rem/1.3 var(--serif); }
-.f-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.45rem; }
-.f-list li { position: relative; }
+.f-head { display: flex; align-items: center; justify-content: space-between; min-height: 2.6rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--grid); }
+.f-head h2 { margin: 0; font: 500 1.7rem/1.2 var(--serif); letter-spacing: -0.01em; }
+.f-body { flex: 1; min-height: 0; overflow-y: auto; margin: 0 -0.6rem; padding: 0 0.6rem; scrollbar-width: thin; }
+.f-list { list-style: none; margin: 0; padding: 0; }
+.f-list li + li { border-top: 1px solid var(--grid); }
 .f-item {
+  position: relative;
   display: block;
   width: 100%;
-  padding: 0.55rem 0.75rem 0.6rem;
-  border: 1px solid var(--grid);
-  border-radius: 12px;
-  background: var(--card);
+  padding: 1rem 0.4rem 1.05rem 1.1rem;
+  border: 0;
+  background: transparent;
   text-align: left;
   cursor: pointer;
-  transition: border-color 120ms, transform 120ms;
+  border-radius: 12px;
+  transition: background-color 150ms, padding-left 180ms;
 }
-.f-item:hover { border-color: var(--grid-strong); transform: translateX(-2px); }
-.f-name { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 0.1rem; }
-.f-tex { display: block; font-size: 1.05rem; line-height: 1.45; overflow-wrap: anywhere; }
-.f-tex .m { white-space: normal; }
-.f-play {
+.f-item::before {
+  content: "";
   position: absolute;
-  top: 0.45rem;
-  right: 0.45rem;
-  width: 1.7rem;
-  height: 1.7rem;
+  left: 0.15rem;
+  top: 1.1rem;
+  bottom: 1.1rem;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--c);
+  transform: scaleY(0);
+  transition: transform 180ms;
+}
+.f-item:hover { background: var(--ink-soft); padding-left: 1.45rem; }
+.f-item:hover::before { transform: scaleY(1); }
+.f-name { display: block; font-size: 0.95rem; color: var(--muted); margin-bottom: 0.25rem; }
+.f-tex { display: block; font-size: 2rem; line-height: 1.35; overflow-wrap: anywhere; }
+.f-tex .m { white-space: normal; font-size: 1em; }
+
+.f-focus { padding: 1.4rem 0.2rem 1rem; }
+.f-focus .f-name { font-size: 1.05rem; }
+.f-focus .f-tex { font-size: 3.1rem; line-height: 1.25; margin: 0.6rem 0 1rem; }
+.f-focus .f-note { margin: 0; font-size: 1.1rem; line-height: 1.6; color: var(--muted); }
+.f-ghost { position: fixed; z-index: 50; margin: 0; pointer-events: none; transform-origin: top left; background: var(--card); border-radius: 16px; box-shadow: 0 24px 50px -24px rgba(10, 20, 30, 0.45); }
+.formulas.bump { animation: bump 280ms ease-out; }
+@keyframes bump { 0% { transform: translateX(0); } 30% { transform: translateX(5px); } 60% { transform: translateX(-2px); } 100% { transform: none; } }
+
+/* The big button at the bottom: a preview of the formula whose pieces light up in the order they'll be built. */
+.f-playbtn {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 1rem 1.2rem;
+  border: 0;
+  border-radius: 18px;
+  background: var(--ink);
+  color: var(--paper);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 150ms;
+}
+.f-playbtn::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 4px;
+  background: var(--c);
+  transform-origin: left;
+  transform: scaleX(var(--prog, 0));
+}
+.f-playbtn:hover { transform: translateY(-2px); }
+.f-playbtn:active { transform: translateY(0) scale(0.99); }
+.f-playicon {
+  flex: none;
   display: grid;
   place-items: center;
-  border: 0;
+  width: 3.4rem;
+  height: 3.4rem;
   border-radius: 50%;
   background: var(--c);
   color: var(--paper);
-  cursor: pointer;
 }
-.f-play svg { width: 0.9rem; height: 0.9rem; margin-left: 2px; }
-.f-play:hover { transform: scale(1.08); }
-
-.f-focus {
-  position: relative;
-  z-index: 15;
-  padding: 1.1rem 1.2rem 1.2rem;
-  border: 1px solid var(--grid-strong);
-  border-radius: 16px;
-  background: var(--card);
-  box-shadow: 0 24px 50px -24px rgba(10, 20, 30, 0.45);
-}
-.f-focus .f-name { font-size: 0.85rem; }
-.f-focus .f-tex { font-size: 1.75rem; line-height: 1.35; margin: 0.4rem 0 0.6rem; }
-.f-focus .f-note { margin: 0; font-size: 0.92rem; line-height: 1.55; color: var(--muted); }
-.f-focus .f-play { position: static; display: inline-flex; width: auto; height: auto; gap: 0.4rem; padding: 0.4rem 0.8rem; margin-top: 0.8rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600; }
-.f-ghost { position: fixed; z-index: 50; margin: 0; pointer-events: none; transform-origin: top left; }
-.formulas.bump { animation: bump 260ms ease-out; }
-@keyframes bump { 0% { transform: translateX(0); } 30% { transform: translateX(4px); } 60% { transform: translateX(-2px); } 100% { transform: none; } }
+.f-playicon svg { width: 1.5rem; height: 1.5rem; margin-left: 3px; }
+.f-playtext { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.f-playlabel { font: 600 1.15rem/1.2 var(--sans); }
+.f-preview { font: italic 400 1.45rem/1.3 var(--serif); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.75; }
+.f-preview span { transition: color 200ms; }
+.f-playbtn:hover .f-preview span, .f-playbtn.playing .f-preview span { animation: piece 1.8s calc(var(--i) * 0.28s) infinite; }
+@keyframes piece { 0%, 100% { color: inherit; } 12%, 30% { color: var(--c); } }
+.f-playbtn.playing .f-playicon { animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { transform: scale(0.9); } }
 
 /* ---------- Theory and practice ---------- */
 
@@ -744,14 +789,18 @@ button { font: inherit; color: inherit; }
   outline-offset: 2px;
 }
 
-@media (max-width: 1180px) {
+@media (max-width: 1280px) {
   .stage { grid-template-columns: minmax(0, 1fr); max-width: 62rem; }
-  .formulas { grid-column: 1; grid-row: auto; position: static; max-height: none; margin-top: 2rem; }
-  .f-list { grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
+  .formulas { grid-column: 1; grid-row: auto; position: static; height: auto; width: 100%; justify-self: stretch; margin-top: 2rem; }
+  .f-body { overflow: visible; }
+  .f-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); column-gap: 1rem; }
+  .f-list li + li { border-top: 0; }
+  .f-list li { border-bottom: 1px solid var(--grid); }
+  .f-tex { font-size: 1.6rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .formulas.bump { animation: none; }
+  .formulas.bump, .f-playbtn .f-preview span, .f-playbtn.playing .f-playicon { animation: none !important; }
   .stage.arrive .topic-head, .stage.arrive .formula, .stage.arrive .aside { animation: none; }
   [data-k], .ibtn, .switch, .switch span { transition: none; }
 }

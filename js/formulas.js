@@ -1,9 +1,9 @@
 // The general formulas for each topic, written with letters rather than numbers.
 // Shown in the list beside the topic; `f` is typeset with MV.M, `note` explains it,
-// and `demo` (optional) builds the formula step by step on the display.
+// Each topic's step-by-step formula play lives in plays.js.
 (() => {
   'use strict';
-  const F = (name, f, note, demo) => ({ name, f, note, demo });
+  const F = (name, f, note) => ({ name, f, note });
 
   MV.formulas = {
     // ---------- Operations ----------
@@ -169,7 +169,7 @@
       F('Circumradius and inradius', 'R = s/√3,  r = s/(2√3)', ''),
     ],
     'tri-scalene': [
-      F('Heron’s formula', 'A = √(s(s − a)(s − b)(s − c))', 'The area from the three sides alone. Press play to watch it built term by term.', MV.demos?.heron),
+      F('Heron’s formula', 'A = √(s(s − a)(s − b)(s − c))', 'The area from the three sides alone. Press Play formula below to watch it built term by term.'),
       F('Semi-perimeter', 's = (a + b + c)/2', 'Half the perimeter.'),
       F('Base and height', 'A = ½ch', ''),
       F('Foot of the height', 'x = (c^2 + b^2 − a^2) / 2c', 'Distance from the left end of the base.'),

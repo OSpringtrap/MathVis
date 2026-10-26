@@ -45,10 +45,6 @@
           <button id="settings" class="ibtn round" type="button" aria-label="Settings" title="Settings" aria-haspopup="true" aria-expanded="false"><svg><use href="#i-gear"/></svg></button>
           <div id="settings-pop" class="menu up" role="dialog" aria-label="Settings" hidden>
             <p class="menu-title">Settings</p>
-            <div class="menu-row"><span>Sound</span><button class="switch" type="button" role="switch" data-pref="sound"><span></span></button></div>
-            <div class="menu-row"><span>Volume</span><input type="range" min="0" max="1" step="0.01" class="slider" data-volume aria-label="Volume"></div>
-            <div class="menu-row"><span>Speed</span><div class="seg" data-speed-group role="group" aria-label="Animation speed"></div></div>
-            <div class="menu-row"><span>Timeline</span><button class="switch" type="button" role="switch" data-pref="timeline"><span></span></button></div>
             <div class="menu-row"><span>Animate when a topic opens</span><button class="switch" type="button" role="switch" data-pref="autoplay"><span></span></button></div>
             <div class="menu-row"><span>Formula list</span><button class="switch" type="button" role="switch" data-pref="formulas"><span></span></button></div>
             <div class="menu-row"><span>Drag hint</span><button class="switch" type="button" role="switch" data-pref="hint"><span></span></button></div>
@@ -116,8 +112,14 @@
           <h2>Formulas</h2>
           <button id="f-back" class="ibtn round" type="button" aria-label="Show all formulas" title="Show all formulas" hidden><svg><use href="#i-up"/></svg></button>
         </div>
-        <ul class="f-list" id="f-list"></ul>
-        <div class="f-focus" id="f-focus" hidden></div>
+        <div class="f-body">
+          <ul class="f-list" id="f-list"></ul>
+          <div class="f-focus" id="f-focus" hidden></div>
+        </div>
+        <button id="f-play" class="f-playbtn" type="button" hidden>
+          <span class="f-playicon"><svg><use href="#i-play"/></svg></span>
+          <span class="f-playtext"><span class="f-playlabel">Play formula</span><span class="f-preview" id="f-preview"></span></span>
+        </button>
       </aside>
 
       <section class="theory" aria-labelledby="theory-title">
@@ -143,6 +145,7 @@
   <script src="js/topics/physics-basics.js"></script>
   <script src="js/topics/newton.js"></script>
   <script src="js/formulas.js"></script>
+  <script src="js/plays.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

@@ -1,0 +1,8 @@
+on the settings, remove the options: "sound, volume, speed and timeline". leave those to their
+respective and already existing buttons on the website
+
+make the formula list about twice as large so we can see it much better and move the list further away
+from the subject on the left -- there's still a bunch of empty space on the right. be creative
+the button for heron's formula works perfectly and i understood it!!! now, move that button for a big
+one on the bottom of the formula list with the label "play formula". repeat that to every formula list
+there is on the website. again, be creative

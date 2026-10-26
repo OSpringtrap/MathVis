@@ -39,7 +39,7 @@ MV.register({
 
 **Modes.** A topic can instead list `modes: [{ id, label, …same fields… }]`. The first is the main view and the rest appear as example buttons (PhysVis uses this: the operation in general, then example simulations). Link to a mode with `#topic:mode`.
 
-**Formula list.** `js/formulas.js` maps each topic id to its general formulas: `{ name, f, note, demo }`, where `f` is typeset with `MV.M`. A `demo` is a small alternative animation (`build`, `steps`, `sfx`, `draw`) that builds the formula term by term on the display, started from the ▶ next to it. Heron's formula (`MV.demos.heron` in geometry.js) is the first one.
+**Formula list.** `js/formulas.js` maps each topic id to its general formulas: `{ name, f, note, demo }`, where `f` is typeset with `MV.M`. `js/plays.js` holds each topic's **Play formula**: the main formula built term by term on the display, started from the big button under the list. `play(name, { pieces: [{ parts: [[position, text]], color, hl, say, draw(p, u, U, k) }] })` builds one: pieces are listed in the order they're built, and `position` says where their text sits in the formula.
 
 **Highlighting.** A step's `hl` keys match `data-k` in the formula and aside: parameter keys (from `h.n` / `h.val`), operator symbols (`'+'`, `'×'`, `'½'`, `'π'`), `'res'` for results, or any key passed as the third argument of `h.c(color, text, key)`.
 
