@@ -170,7 +170,7 @@
       ['Order matters', `Subtraction isn't commutative, and neither is relative velocity: ${M('v_{B rel A} = −v_{A rel B}')}. From the car, the truck approaches at ${M('b − a')}, a negative number, which means moving backwards towards it.`],
     ],
     practice: ({ a, b }, h) => [
-      `Overtaking a truck at ${h.val('b')} m/s while doing ${h.val('a')} m/s, you only gain ${h.r(a - b)} m each second. Passing a 20 m truck plus safety gaps takes ${h.r(a - b > 0 ? 50 / (a - b) : Infinity, 1)} s.`,
+      `Overtaking a truck at ${h.val('b')} m/s while doing ${h.val('a')} m/s, you only gain ${h.r(a - b)} m each second. ${a - b > 0 ? `Passing a 20 m truck plus safety gaps takes ${h.r(50 / (a - b), 1)} s.` : 'At that speed you never get past it.'}`,
       `Two trains approaching head-on at 30 m/s each close at 30 − (−30) = 60 m/s: subtracting a negative adds.`,
       `Docking with the space station, both craft move at about 7,660 m/s, but the relative speed at contact is a few centimetres per second.`,
     ],

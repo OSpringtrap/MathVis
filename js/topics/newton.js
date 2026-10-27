@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   const { S, fmt, dashed, seg, lerp, niceStep, M, MINUS, sfx, pitch, note } = MV;
-  const G = 'Newton’s laws';
+  const G = 'Mechanics';
   const op = (s) => `<span class="op">${s}</span>`;
   const G_ACC = 9.8;
 

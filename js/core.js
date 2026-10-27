@@ -188,6 +188,7 @@
     snip: (at) => ({ kind: 'snip', at }),
     thud: (at) => ({ kind: 'thud', at }),
     splash: (at) => ({ kind: 'splash', at }),
+    hum: (at, until, f, harmonics = [1], gain = 1) => ({ kind: 'hum', at, until, f, harmonics, gain }),
   };
 
   window.MV = {

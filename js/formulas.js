@@ -208,6 +208,20 @@
       F('Square–cube law', 'A ∝ L^2,  V ∝ L^3', ''),
     ],
 
+    // ---------- Physics: mechanics ----------
+    'm-motion': [
+      F('Uniform motion', 's = s_0 + vt', 'Constant velocity: equal distances in equal times.'),
+      F('Velocity', 'v = v_0 + at', 'Constant acceleration: the speed changes by a every second.'),
+      F('Position', 's = s_0 + v_0 t + ½at^2', 'Uniformly varied motion.'),
+      F('Torricelli', 'v^2 = v_0^2 + 2aΔs', 'No time needed.'),
+      F('Stopping distance', 'd = vt_r + v^2/2a', 'Reaction distance plus braking distance.'),
+    ],
+    'm-graphs': [
+      F('Velocity is slope', 'v = Δx/Δt', 'The slope of the position–time graph.'),
+      F('Acceleration is slope', 'a = Δv/Δt', 'The slope of the velocity–time graph.'),
+      F('Displacement is area', 'Δx = area under v(t)', 'Area below the axis counts as negative.'),
+      F('Trapezoid area', 'Δx = (v_0 + v)t/2', 'For constant acceleration.'),
+    ],
     // ---------- Physics: Newton's laws ----------
     'n-first': [
       F('First law', 'ΣF = 0 ⇒ Δv = 0', 'No net force, no change in velocity.'),
@@ -226,6 +240,156 @@
       F('Third law', 'F_{AB} = −F_{BA}', 'Equal size, opposite direction, on different objects.'),
       F('Momentum', 'm_A v_A = m_B v_B', 'Pushing apart from rest.'),
       F('Accelerations', 'a_A / a_B = m_B / m_A', 'Equal forces: the lighter one accelerates more.'),
+    ],
+    'm-forces': [
+      F('Kinetic friction', 'f_k = μ_k N', 'While sliding.'),
+      F('Static friction', 'f_s ≤ μ_s N', 'It matches the push, up to a limit.'),
+      F('Net force', 'F − f = ma', 'Pull minus friction.'),
+      F('Connected blocks', 'a = F/(m_A + m_B)', 'Tied together, they move as one.'),
+      F('Rope tension', 'T = m_B a', 'What the back block needs.'),
+      F('Ramp', 'a = g(sin θ − μ cos θ)', 'The mass cancels.'),
+      F('Lift cable', 'T = m(g + a)', 'Holding plus accelerating.'),
+    ],
+    'm-energy': [
+      F('Work', 'W = Fd', 'Force along the motion times distance.'),
+      F('Kinetic energy', 'E_k = ½mv^2', 'The energy of motion.'),
+      F('Potential energy', 'E_p = mgh', 'The energy of height.'),
+      F('Elastic energy', 'E_e = ½kx^2', 'Stored in a spring.'),
+      F('Conservation', '½mv^2 + mgh = const', 'Without friction.'),
+      F('Speed from height', 'v = √(2gh)', 'The same for every mass.'),
+    ],
+    // ---------- Physics: heat and thermodynamics ----------
+    't-expansion': [
+      F('Linear expansion', 'ΔL = L_0 α ΔT', 'α: the expansion coefficient of the material.'),
+      F('New length', 'L = L_0(1 + αΔT)', ''),
+      F('Surface expansion', 'ΔA = A_0 · 2α · ΔT', 'β = 2α.'),
+      F('Volume expansion', 'ΔV = V_0 · 3α · ΔT', 'γ = 3α for solids.'),
+      F('Apparent expansion', 'ΔV_{app} = V_0(γ_{liq} − γ_{flask})ΔT', 'What you see rise in the neck.'),
+    ],
+    't-calor': [
+      F('Sensible heat', 'Q = mcΔT', 'Changes the temperature.'),
+      F('Latent heat', 'Q = mL', 'Changes the state, at constant temperature.'),
+      F('Heat capacity', 'C = mc', 'Joules per degree for the whole object.'),
+      F('Equilibrium', 'Q_{lost} + Q_{gained} = 0', 'No heat escapes.'),
+      F('Mixing', 'T = (m_1 T_1 + m_2 T_2)/(m_1 + m_2)', 'Same liquid: a weighted average.'),
+    ],
+    't-transfer': [
+      F('Conduction', 'Φ = kAΔT/L', 'Heat flow through a slab.'),
+      F('Radiation', 'P = σAT^4', 'Stefan–Boltzmann law, T in kelvin.'),
+      F('Wien’s law', 'λ_{max} = b/T', 'Hotter glows bluer.'),
+      F('Cooling', 'T = T_r + (T_0 − T_r)e^{−kt}', 'Newton’s law of cooling.'),
+    ],
+    't-first': [
+      F('First law', 'ΔU = Q − W', 'Energy conservation for heat and work.'),
+      F('Work at constant pressure', 'W = pΔV', 'The area under the p–V graph.'),
+      F('Ideal gas', 'pV = nRT', 'T in kelvin.'),
+      F('Isothermal', 'ΔU = 0 ⇒ Q = W', 'Constant temperature.'),
+      F('Adiabatic', 'Q = 0 ⇒ ΔU = −W', 'No heat exchanged.'),
+    ],
+    't-engines': [
+      F('Efficiency', 'η = W/Q_H', 'The useful share of the heat.'),
+      F('Energy balance', 'W = Q_H − Q_C', ''),
+      F('Carnot limit', 'η_{max} = 1 − T_C/T_H', 'Temperatures in kelvin.'),
+      F('Refrigerator', 'COP = Q_C/W', 'Heat removed per joule of work.'),
+    ],
+    // ---------- Physics: optics ----------
+    'o-mirrors': [
+      F('Law of reflection', 'θ_r = θ_i', 'Angles measured from the normal.'),
+      F('Plane mirror', 'd_i = d_o', 'The image is as far behind as the object is in front.'),
+      F('Focal length', 'f = R/2', 'Half the radius of curvature.'),
+      F('Mirror equation', '1/f = 1/d_o + 1/d_i', 'f negative for a convex mirror.'),
+      F('Magnification', 'm = −d_i/d_o', 'Negative: upside down.'),
+    ],
+    'o-refraction': [
+      F('Refractive index', 'n = c/v', 'How much slower light travels.'),
+      F('Snell’s law', 'n_1 sin θ_1 = n_2 sin θ_2', ''),
+      F('Wavelength', 'λ_2 = λ_1 n_1/n_2', 'The frequency stays the same.'),
+      F('Apparent depth', 'd′ = d/n', 'Seen from straight above.'),
+    ],
+    'o-tir': [
+      F('Critical angle', 'sin θ_c = n_2/n_1', 'Only from denser to less dense.'),
+      F('Total reflection', 'θ > θ_c ⇒ 100 % reflected', ''),
+    ],
+    'o-lenses': [
+      F('Thin lens', '1/f = 1/d_o + 1/d_i', 'f negative for a diverging lens.'),
+      F('Magnification', 'm = h_i/h_o = −d_i/d_o', ''),
+      F('Power', 'P = 1/f', 'In dioptres when f is in metres.'),
+      F('Lenses together', 'P = P_1 + P_2', 'Powers of thin lenses in contact add.'),
+    ],
+    'o-vision': [
+      F('Focusing', 'P_{eye} = P_{retina} + 1/d', 'Power needed to focus at distance d.'),
+      F('Short sight', 'P = −1/d_{far}', 'Diverging lens.'),
+      F('Long sight', 'P = 1/0.25 − 1/d_{near}', 'Converging lens, to read at 25 cm.'),
+      F('Glasses add', 'P_{total} = P_{eye} + P_{glasses}', ''),
+    ],
+    // ---------- Physics: waves ----------
+    'w-equation': [
+      F('Wave speed', 'v = λf', 'The fundamental wave equation.'),
+      F('Period', 'T = 1/f', 'Time for one full wave to pass.'),
+      F('Speed from period', 'v = λ/T', 'One wavelength per period.'),
+      F('Travelling wave', 'y = A sin(2π(x/λ − ft))', 'The shape, moving right.'),
+    ],
+    'w-phenomena': [
+      F('Reflection', 'θ_r = θ_i', ''),
+      F('Refraction', 'sin θ_1/sin θ_2 = v_1/v_2', 'The frequency doesn’t change.'),
+      F('Diffraction', 'sin θ ≈ λ/a', 'Spreading through a gap of width a.'),
+      F('Constructive interference', 'Δd = mλ', 'Path difference a whole number of wavelengths.'),
+      F('Destructive interference', 'Δd = (m + ½)λ', 'A half number: they cancel.'),
+      F('Malus’s law', 'I = I_0 cos^2 θ', 'Polarized light through a polarizer.'),
+      F('Resonance', 'f_{push} = f_0', 'Biggest response at the natural frequency.'),
+    ],
+    'w-sound': [
+      F('Pitch', 'f = 1/T', 'Higher frequency, higher note.'),
+      F('Loudness', 'β = 10 log(I/I_0)', 'In decibels.'),
+      F('Echo', 'd = vt/2', 'There and back.'),
+      F('Doppler', 'f′ = f v/(v − v_s)', 'Source approaching.'),
+    ],
+    'w-standing': [
+      F('String', 'f_n = nv/2L', 'Fixed at both ends.'),
+      F('Open tube', 'f_n = nv/2L', 'Open at both ends.'),
+      F('Closed tube', 'f_n = nv/4L,  n odd', 'Closed at one end.'),
+      F('Wave speed on a string', 'v = √(T/μ)', 'Tension over mass per metre.'),
+    ],
+    'w-spectrum': [
+      F('Speed of light', 'c = λf', 'For every electromagnetic wave.'),
+      F('Photon energy', 'E = hf', 'Planck’s constant times frequency.'),
+      F('Energy and wavelength', 'E = hc/λ', 'Shorter waves, bigger packets.'),
+    ],
+    // ---------- Physics: electricity ----------
+    'e-ohm': [
+      F('Current', 'i = Δq/Δt', 'Charge flowing per second, in amperes.'),
+      F('First law', 'V = Ri', 'For ohmic conductors.'),
+      F('Second law', 'R = ρL/A', 'Length, area and material.'),
+    ],
+    'e-circuits': [
+      F('Series', 'R_{eq} = R_1 + R_2 + …', 'Same current, voltages add.'),
+      F('Parallel', '1/R_{eq} = 1/R_1 + 1/R_2 + …', 'Same voltage, currents add.'),
+      F('Two in parallel', 'R_{eq} = R_1 R_2/(R_1 + R_2)', 'Product over sum.'),
+      F('Junction rule', 'i = i_1 + i_2', 'Charge in = charge out.'),
+      F('Loop rule', 'V = V_1 + V_2', 'Energy supplied = energy used.'),
+    ],
+    'e-meters': [
+      F('Ammeter in series', 'i = V/(R + r_A)', 'Ideal: r_A = 0.'),
+      F('Voltmeter in parallel', 'R_∥ = R R_V/(R + R_V)', 'Ideal: R_V → ∞.'),
+    ],
+    'e-power': [
+      F('Energy', 'E = PΔt', 'kWh when P is in kW and Δt in hours.'),
+      F('Power', 'P = Vi', 'Voltage times current.'),
+      F('Joule heating', 'P = Ri^2', 'Heat in a resistance.'),
+      F('From voltage', 'P = V^2/R', ''),
+      F('The bill', 'cost = E × price', ''),
+    ],
+    'e-safety': [
+      F('Current from power', 'i = P/V', 'Each appliance.'),
+      F('Total current', 'i = i_1 + i_2 + …', 'Appliances in parallel.'),
+      F('Short circuit', 'i = V/r', 'Tiny r, huge current.'),
+      F('Heating the wire', 'P = Ri^2', 'Why too much current is dangerous.'),
+    ],
+    'm-momentum': [
+      F('Momentum', 'p = mv', 'Mass times velocity, with direction.'),
+      F('Conservation', 'm_1 v_1 + m_2 v_2 = m_1 v_1′ + m_2 v_2′', 'In an isolated system.'),
+      F('Sticking together', 'v′ = (m_1 v_1 + m_2 v_2)/(m_1 + m_2)', 'Perfectly inelastic collision.'),
+      F('Impulse', 'FΔt = Δp', 'Force times time changes momentum.'),
     ],
   };
 })();

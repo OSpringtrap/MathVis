@@ -50,7 +50,7 @@
   let topic = null;    // the topic with its active mode (or a formula demo) merged in
   let modeIdx = 0, state = {}, drag = null, realm = null;
   let steps = [], sounds = [], litKey = '';
-  let demo = null, beforeDemo = null, focusIdx = -1;
+  let demo = null, beforeDemo = null, focusIdx = -1, selIdx = -1;
   const remembered = {}, lastInRealm = { math: null, phys: null };
 
   // The whole animation lives on one timeline, in seconds: first the build (frame.k goes 0 → 1),
@@ -326,14 +326,39 @@
     }
   }
 
+  // Buttons are only rewritten when their state actually changes. Replacing an icon every frame
+  // swallowed clicks: the element under the pointer vanished between press and release.
+  const shown = { play: '', fPlay: '' };
   function updateButtons() {
     if (!topic) return;
-    if (demo) els.fPlay.querySelector('.f-playlabel').textContent = tl.playing ? 'Playing formula' : tl.p >= total() - 1e-6 ? 'Play formula again' : 'Paused';
-    els.fPlay.classList.toggle('playing', !!demo && tl.playing);
     const playing = tl.playing;
-    els.play.innerHTML = `<svg><use href="#i-${playing ? 'pause' : 'play'}"/></svg>`;
-    els.play.setAttribute('aria-label', playing ? 'Pause' : hasTail() ? (topic.sim ? 'Run the simulation' : 'Play the sweep') : 'Play the drawing');
-    els.play.title = els.play.getAttribute('aria-label');
+    const playKey = `${playing}|${hasTail()}|${!!topic.sim}`;
+    if (shown.play !== playKey) {
+      shown.play = playKey;
+      els.play.querySelector('use').setAttribute('href', `#i-${playing ? 'pause' : 'play'}`);
+      els.play.setAttribute('aria-label', playing ? 'Pause' : hasTail() ? (topic.sim ? 'Run the simulation' : 'Play the sweep') : 'Play the drawing');
+      els.play.title = els.play.getAttribute('aria-label');
+    }
+    updatePlayFormula();
+  }
+
+  function updatePlayFormula() {
+    const ready = selIdx >= 0 && !!selectedPlay();
+    const state = !ready ? 'idle' : !demo ? 'ready' : tl.playing ? 'playing' : tl.p >= (topic.sim ? total() : buildLen()) - 1e-6 ? 'done' : 'paused';
+    const key = `${state}|${selIdx}`;
+    if (shown.fPlay === key) return;
+    shown.fPlay = key;
+    els.fPlay.disabled = !ready;
+    els.fPlay.classList.toggle('playing', state === 'playing');
+    els.fPlay.querySelector('use').setAttribute('href', `#i-${state === 'playing' ? 'pause' : 'play'}`);
+    els.fPlay.querySelector('.f-playlabel').textContent = {
+      idle: 'Click a formula to show it live', ready: 'Show formula', playing: 'Showing formula', paused: 'Paused', done: 'Show formula again',
+    }[state];
+    if (!ready) { els.fPreview.innerHTML = ''; els.fPlay.setAttribute('aria-label', 'Click a formula in the list to show it live'); return; }
+    const play = selectedPlay(), f = formulaList()[selIdx];
+    const parts = play.preview.map(([pos, text, order]) => ({ pos, text, order })).sort((x, y) => x.pos - y.pos);
+    els.fPreview.innerHTML = parts.map((x) => `<span style="--i:${x.order}">${x.text}</span>`).join('');
+    els.fPlay.setAttribute('aria-label', `${state === 'playing' ? 'Pause' : 'Show'} ${f.name}, built step by step on the display`);
   }
 
   // ---------- Parameters ----------
@@ -363,6 +388,8 @@
   // ---------- Formula list ----------
 
   const formulaList = () => (topic && (topic.formulas || MV.formulas?.[base.id])) || [];
+  // Each formula in a topic's list has its own play, keyed by the formula's name.
+  const selectedPlay = () => (selIdx >= 0 ? MV.plays?.[base.id]?.[formulaList()[selIdx]?.name] : null);
 
   function renderFormulas() {
     const list = formulaList();
@@ -370,19 +397,14 @@
     els.stage.classList.toggle('no-formulas', !show);
     els.formulas.hidden = !show;
     focusIdx = -1;
+    selIdx = -1;
     els.fFocus.hidden = true;
     els.fBack.hidden = true;
     els.fList.hidden = false;
     els.fList.innerHTML = list.map((f, i) => `<li><button type="button" class="f-item" data-i="${i}">` +
       `<span class="f-name">${f.name}</span><span class="f-tex">${MV.M(f.f)}</span></button></li>`).join('');
-    // The big button plays this topic's formula; its preview lights the pieces up in the order they'll be built.
-    const play = MV.plays?.[base.id];
-    els.fPlay.hidden = !play;
-    if (play) {
-      const parts = play.preview.map(([pos, text, order]) => ({ pos, text, order })).sort((x, y) => x.pos - y.pos);
-      els.fPreview.innerHTML = parts.map((x) => `<span style="--i:${x.order}">${x.text}</span>`).join('');
-      els.fPlay.setAttribute('aria-label', `Play formula: build ${play.name} step by step on the display`);
-    }
+    shown.fPlay = '';
+    updatePlayFormula();
   }
 
   // The chosen formula pops out of the list and grows into a card.
@@ -392,6 +414,10 @@
     if (!f || !item) return;
     const from = item.getBoundingClientRect();
     focusIdx = i;
+    if (selIdx !== i && demo) endDemo();
+    selIdx = i;
+    for (const el of els.fList.querySelectorAll('.f-item')) el.classList.toggle('sel', +el.dataset.i === i);
+    updatePlayFormula();
     els.fFocus.innerHTML = `<span class="f-name">${f.name}</span><span class="f-tex">${MV.M(f.f)}</span>` +
       (f.note ? `<p class="f-note">${f.note}</p>` : '');
     els.fList.hidden = true;
@@ -453,25 +479,25 @@
     if (item) { MV.sound.unlock(); openFocus(+item.dataset.i); }
   });
   els.fPlay.addEventListener('click', () => {
+    if (els.fPlay.disabled) return;
     if (demo && tl.playing) { pause(); return; }
-    if (demo && tl.p < buildLen() - 1e-6) { start(false); return; }
+    if (demo && tl.p < total() - 1e-6) { start(false); return; }
     startDemo();
   });
   els.fBack.addEventListener('click', closeFocus);
 
   // A formula demo temporarily takes over the player: it builds the formula one term at a time.
   function startDemo() {
-    const play = MV.plays?.[base.id];
+    const play = selectedPlay();
     if (!play) return;
     MV.sound.unlock();
     if (demo) endDemo(false);
     demo = play;
     beforeDemo = topic;
     topic = { ...topic, ...play, sim: undefined, animate: undefined, simSay: undefined, simSfx: undefined, readout: undefined };
-    els.fPlay.classList.add('playing');
-    els.fPlay.querySelector('.f-playlabel').textContent = 'Playing formula';
-    els.demoChip.querySelector('span').textContent = play.name;
-    els.demoChip.setAttribute('aria-label', `Leave ${play.name}`);
+    const name = formulaList()[selIdx].name;
+    els.demoChip.querySelector('span').textContent = name;
+    els.demoChip.setAttribute('aria-label', `Leave ${name}`);
     els.demoChip.hidden = false;
     els.fig.setAttribute('viewBox', `0 0 800 ${topic.height || 420}`);
     renderText();
@@ -494,9 +520,9 @@
   }
   els.demoChip.addEventListener('click', () => endDemo());
   function resetPlayButton() {
-    els.fPlay.classList.remove('playing');
-    els.fPlay.querySelector('.f-playlabel').textContent = 'Play formula';
     els.fPlay.style.setProperty('--prog', 0);
+    shown.fPlay = '';
+    updatePlayFormula();
   }
 
   // ---------- Topics and modes ----------
@@ -541,7 +567,9 @@
     els.modes.innerHTML = '';
     if (t.modes) {
       const btn = (m, i) => `<button type="button" data-mode="${m.id}" aria-pressed="${i === modeIdx}">${m.label}</button>`;
-      els.modes.innerHTML = btn(t.modes[0], 0) + (t.modes.length > 1 ? `<span class="label">Examples</span>` : '') +
+      // modesLabel: null lists the modes as equals (series / parallel / mixed); a string renames "Examples".
+      const lab = t.modesLabel === undefined ? 'Examples' : t.modesLabel;
+      els.modes.innerHTML = btn(t.modes[0], 0) + (t.modes.length > 1 && lab ? `<span class="label">${lab}</span>` : '') +
         t.modes.slice(1).map((m, i) => btn(m, i + 1)).join('');
     }
     els.formula.classList.toggle('compact', !!topic.compact);

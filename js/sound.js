@@ -86,6 +86,14 @@
     swoosh: (e, d, t) => noisy('bandpass', 2400, 350, t, Math.max(0.15, d), 0.16),
     snip: (e, d, t) => { noisy('highpass', 4000, 6000, t, 0.04, 0.22, 0.7); tone('square', 1800, 1200, t, 0.02, 0.04, 0.03); },
     thud: (e, d, t) => tone('sine', 140, 45, t, 0.18, 0.35, 0.12),
+    // A sustained note built from harmonics: amps[i] is the strength of (i + 1) × f. Used to let you hear pitch, loudness and timbre.
+    hum(e, d, t) {
+      const amps = e.harmonics || [1], sum = amps.reduce((a, b) => a + Math.abs(b), 0) || 1;
+      amps.forEach((a, i) => {
+        const f = e.f * (i + 1);
+        if (a > 0 && f < 6000) tone('sine', Math.max(30, f), null, t, Math.max(0.12, d), Math.max(0.0002, (0.16 * (e.gain ?? 1) * a) / sum), 0.15);
+      });
+    },
     splash: (e, d, t) => noisy('lowpass', 4000, 300, t, 0.45, 0.25, 0.8),
   };
 

@@ -731,7 +731,15 @@ button { font: inherit; color: inherit; }
   transform-origin: left;
   transform: scaleX(var(--prog, 0));
 }
-.f-playbtn:hover { transform: translateY(-2px); }
+/* Icons never take the click: the button underneath always gets it. */
+button svg, button use { pointer-events: none; }
+
+.f-playbtn:disabled { cursor: default; background: var(--ink-soft); color: var(--muted); }
+.f-playbtn:disabled .f-playicon { background: var(--grid-strong); color: var(--card); }
+.f-playbtn:disabled .f-playlabel { font-weight: 500; }
+.f-playbtn:not(:disabled):hover { transform: translateY(-2px); }
+.f-item.sel { background: var(--c-soft); padding-left: 1.45rem; }
+.f-item.sel::before { transform: scaleY(1); }
 .f-playbtn:active { transform: translateY(0) scale(0.99); }
 .f-playicon {
   flex: none;
@@ -746,9 +754,10 @@ button { font: inherit; color: inherit; }
 .f-playicon svg { width: 1.5rem; height: 1.5rem; margin-left: 3px; }
 .f-playtext { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
 .f-playlabel { font: 600 1.15rem/1.2 var(--sans); }
+.f-preview:empty { display: none; }
 .f-preview { font: italic 400 1.45rem/1.3 var(--serif); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.75; }
 .f-preview span { transition: color 200ms; }
-.f-playbtn:hover .f-preview span, .f-playbtn.playing .f-preview span { animation: piece 1.8s calc(var(--i) * 0.28s) infinite; }
+.f-playbtn:not(:disabled):hover .f-preview span, .f-playbtn.playing .f-preview span { animation: piece 1.8s calc(var(--i) * 0.28s) infinite; }
 @keyframes piece { 0%, 100% { color: inherit; } 12%, 30% { color: var(--c); } }
 .f-playbtn.playing .f-playicon { animation: pulse 1.2s ease-in-out infinite; }
 @keyframes pulse { 50% { transform: scale(0.9); } }
